@@ -1,0 +1,13 @@
+  name: Deploy Frontend
+  on:
+    push:
+      branches:
+        - master
+
+  jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - run: docker build -t bigyellowhammer/docker-react -f Dockerfile.dev .
+        - run: docker run -e CI=true bigyellowhammer/docker-react npm run test
