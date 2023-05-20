@@ -11,7 +11,7 @@
         - uses: actions/checkout@v2
         
         - name: Build docker image
-          run: docker build -t bigyellowhammer/docker-react .
+          run: docker build -t bigyellowhammer/docker-react -f Dockerfile.dev .
         
         - name: Run tests
           run: docker run -e CI=true bigyellowhammer/docker-react npm run test
