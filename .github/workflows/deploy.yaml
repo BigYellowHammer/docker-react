@@ -9,5 +9,24 @@
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v2
-        - run: docker build -t bigyellowhammer/docker-react -f Dockerfile.dev .
-        - run: docker run -e CI=true bigyellowhammer/docker-react npm run test
+        
+        - name: Build docker image
+          run: docker build -t bigyellowhammer/docker-react -f Dockerfile.dev .
+        
+        - name: Run tests
+          run: docker run -e CI=true bigyellowhammer/docker-react npm run test
+
+        - name: Generate deployment package
+          run: zip -r deploy.zip . -x '*.git*'
+        
+        - name: Deploy to AWS Elasticbeanstalk
+          uses: einaregilsson/beanstalk-deploy@18
+          with:
+            aws_access_key: ${{ secrects.AWS_ACCESS_KEY }}
+            aws_secret_key: ${{ secrects.AWS_SECRET_KEY }}
+            application_name: FirstReactApp
+            environment_name: FirstReactApp-env
+            existing_bucket_name: elasticbeanstalk-us-east-1-495531827909
+            region: us-east-1
+            version_label: ${{ github.sha}}
+            deployment_package: deploy.zip
